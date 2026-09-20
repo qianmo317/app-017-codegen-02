@@ -1,0 +1,6 @@
+services:
+  app-017:
+    build: .
+    ports:
+      - "8107:80"
+    restart: unless-stopped

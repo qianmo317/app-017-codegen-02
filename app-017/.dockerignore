@@ -1,0 +1,17 @@
+node_modules
+dist
+.git
+.gitignore
+.env
+.env.*
+*.log
+coverage
+.vscode
+.idea
+tests
+test-results
+e2e
+playwright.config.ts
+playwright-report
+design-src
+*.psd
