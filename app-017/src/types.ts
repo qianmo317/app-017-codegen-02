@@ -14,6 +14,8 @@ export interface BrailleCell {
   reading?: string;
   /** 转换期分配的词序号（测试用于验证词不跨行；页码行等无此字段） */
   wordId?: number;
+  /** 来源字符在所属词内的偏移（版本对比用于把方归并到原字） */
+  srcPos?: number;
 }
 
 export interface PageSetup {

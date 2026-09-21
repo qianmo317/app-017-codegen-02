@@ -29,6 +29,7 @@ export default function HomePage() {
           ＋ 新建盲文文档
         </button>
         <button type="button" onClick={() => navigate('/library')}>从模板新建</button>
+        <button type="button" onClick={() => navigate('/compare')}>版本对比</button>
       </p>
       {docs === null ? (
         <p>加载中…</p>

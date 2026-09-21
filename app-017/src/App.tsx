@@ -7,6 +7,7 @@ import EditorPage from './pages/EditorPage';
 import PrintPage from './pages/PrintPage';
 import LibraryPage from './pages/LibraryPage';
 import SettingsPage from './pages/SettingsPage';
+import ComparePage from './pages/ComparePage';
 
 interface SettingsCtx {
   settings: AppSettings;
@@ -44,6 +45,7 @@ export default function App() {
   if (path === '/' || path === '') page = <HomePage />;
   else if (path === '/library') page = <LibraryPage />;
   else if (path === '/settings') page = <SettingsPage />;
+  else if (path === '/compare') page = <ComparePage />;
   else if (/^\/editor\/[^/]+\/print$/.test(path)) page = <PrintPage id={path.split('/')[2]} />;
   else if (/^\/editor\/[^/]+$/.test(path)) page = <EditorPage id={path.split('/')[2]} />;
   else page = <HomePage />;
@@ -60,6 +62,9 @@ export default function App() {
         </a>
         <a href="/library" onClick={(e) => { e.preventDefault(); window.history.pushState(null, '', '/library'); window.dispatchEvent(new PopStateEvent('popstate')); }}>
           模板与词语表
+        </a>
+        <a href="/compare" onClick={(e) => { e.preventDefault(); window.history.pushState(null, '', '/compare'); window.dispatchEvent(new PopStateEvent('popstate')); }}>
+          版本对比
         </a>
         <a href="/settings" onClick={(e) => { e.preventDefault(); window.history.pushState(null, '', '/settings'); window.dispatchEvent(new PopStateEvent('popstate')); }}>
           设置

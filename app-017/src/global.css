@@ -183,6 +183,63 @@ html.high-contrast .cell-btn.selected { background: rgba(255, 212, 0, 0.25); }
   body { background: #fff; }
 }
 
+/* ---------- 版本对比 ---------- */
+.compare-selects {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  margin-bottom: 14px;
+}
+.compare-selects label { flex: 1; min-width: 240px; margin: 0; }
+.compare-selects select { width: 100%; margin-top: 4px; }
+.diff-toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 10px 0 14px;
+}
+.diff-list { list-style: none; padding: 0; display: grid; gap: 8px; }
+.diff-item {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+.diff-item label {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  margin: 0;
+}
+.diff-item input[type='checkbox'] { align-self: center; }
+.diff-item.info { border-left-color: var(--muted); color: var(--muted); }
+.diff-item:has(.badge.add) { border-left-color: var(--accent); }
+.diff-item:has(.badge.del) { border-left-color: var(--danger); }
+.diff-item:has(.badge.mod) { border-left-color: #b26a00; }
+.badge.add { background: #e6f4e6; color: #1b5e20; }
+.badge.del { background: #fdecea; color: #b3261e; }
+.badge.mod { background: var(--warn-bg); color: var(--warn-ink); }
+html.high-contrast .badge.add,
+html.high-contrast .badge.del,
+html.high-contrast .badge.mod {
+  background: #000;
+  color: #ffd400;
+  border: 1px solid #ffd400;
+}
+.diff-loc { color: var(--muted); font-size: 0.9rem; }
+.diff-content del { text-decoration: line-through; }
+.diff-content ins { text-decoration: underline; }
+.apply-note {
+  background: var(--warn-bg);
+  color: var(--warn-ink);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
 /* 反馈提示 */
 .live-region {
   position: absolute;

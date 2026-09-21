@@ -152,7 +152,7 @@ function convertWord(
       const { ch, r } = resolved[i];
       if (!r.syllable) {
         // 未收录字：空方 + uncertain，等待用户给出拼音
-        cells.push({ dots: [], source: ch, kind: 'hanzi', uncertain: true, reading: '' });
+        cells.push({ dots: [], source: ch, kind: 'hanzi', uncertain: true, reading: '', srcPos: i });
         uncertainOut.push({ char: ch, reading: '', candidates: [], unrecognized: true, word });
         continue;
       }
@@ -174,10 +174,11 @@ function convertWord(
             source: ch,
             kind: 'hanzi',
             reading: di === dotArrs.length - 1 ? r.reading : '',
+            srcPos: i,
           }),
         );
       } else {
-        cells.push({ dots: [], source: ch, kind: 'hanzi', uncertain: true, reading: r.reading });
+        cells.push({ dots: [], source: ch, kind: 'hanzi', uncertain: true, reading: r.reading, srcPos: i });
       }
       // 多音字且未被确认 → uncertain（绝不静默猜测）
       if (r.candidates.length > 1 && !confirmed.includes(ch)) {
@@ -188,15 +189,21 @@ function convertWord(
   }
 
   if (type === 'digit') {
+    let i = 0;
     for (const ch of word) {
       if (ch === '.') {
-        cells.push({ dots: DECIMAL_SIGN.split('').map(Number), kind: 'punct', source: ch });
+        cells.push({ dots: DECIMAL_SIGN.split('').map(Number), kind: 'punct', source: ch, srcPos: i });
+        i++;
         continue;
       }
       const d = DIGITS[ch];
-      if (!d) continue;
-      cells.push({ dots: NUMBER_SIGN.split('').map(Number), kind: 'prefix', source: ch });
-      cells.push({ dots: d.split('').map(Number), kind: 'digit', source: ch });
+      if (!d) {
+        i++;
+        continue;
+      }
+      cells.push({ dots: NUMBER_SIGN.split('').map(Number), kind: 'prefix', source: ch, srcPos: i });
+      cells.push({ dots: d.split('').map(Number), kind: 'digit', source: ch, srcPos: i });
+      i++;
     }
     return { source: word, cells, atomic: true };
   }
@@ -206,35 +213,44 @@ function convertWord(
     if (opts.autoDetectPinyin && /^[a-z0-4]+$/.test(word)) {
       const parts = splitPinyinRun(word);
       if (parts) {
+        let pos = 0;
         for (const part of parts) {
           const syll = parseSyllable(part);
-          if (!syll) continue;
-          let tone = syll.tone;
-          if (opts.toneMode === 'none') tone = 0;
-          else if (opts.toneMode === 'national' && shouldOmitTone(syll.canonical, syll.initial, syll.tone, false)) tone = 0;
-          const dots = syllableToDotArrays(syll.initial, syll.final, tone);
-          if (dots) {
-            for (const d of dots) cells.push({ dots: d, source: part, kind: 'hanzi' });
+          if (syll) {
+            let tone = syll.tone;
+            if (opts.toneMode === 'none') tone = 0;
+            else if (opts.toneMode === 'national' && shouldOmitTone(syll.canonical, syll.initial, syll.tone, false)) tone = 0;
+            const dots = syllableToDotArrays(syll.initial, syll.final, tone);
+            if (dots) {
+              for (const d of dots) cells.push({ dots: d, source: part, kind: 'hanzi', srcPos: pos });
+            }
           }
+          pos += part.length;
         }
         return { source: word, cells, atomic: true };
       }
     }
     // 英文字母：每方加字母号（GF 0019-2018 §8；UEB 档位仅大写号）
     const useLetterSign = opts.profile === 'zh-current';
+    let i = 0;
     for (const ch of word) {
       const lower = ch.toLowerCase();
       const dots = LETTERS[lower];
-      if (!dots) continue;
+      if (!dots) {
+        i++;
+        continue;
+      }
       const isUpper = ch !== lower;
       if (useLetterSign || isUpper) {
         cells.push({
           dots: (isUpper ? UPPER_SIGN : LOWER_SIGN).split('').map(Number),
           kind: 'prefix',
           source: ch,
+          srcPos: i,
         });
       }
-      cells.push({ dots: dots.split('').map(Number), kind: 'letter', source: ch });
+      cells.push({ dots: dots.split('').map(Number), kind: 'letter', source: ch, srcPos: i });
+      i++;
     }
     return { source: word, cells, atomic: true };
   }
