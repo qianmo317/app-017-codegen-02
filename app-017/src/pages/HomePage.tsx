@@ -53,6 +53,13 @@ export default function HomePage() {
               <button type="button" onClick={() => navigate(`/editor/${d.id}`)}>
                 打开
               </button>
+              <button
+                type="button"
+                onClick={() => navigate(`/compare?old=${encodeURIComponent(d.id)}`)}
+                title="以此版为旧版，挑选另一版对比"
+              >
+                对比版本
+              </button>
               <button type="button" className="danger" onClick={() => remove(d.id)} aria-label={`删除 ${d.title}`}>
                 删除
               </button>

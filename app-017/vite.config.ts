@@ -9,4 +9,8 @@ export default defineConfig({
     target: 'es2020',
     chunkSizeWarningLimit: 1200,
   },
+  test: {
+    // e2e 由 Playwright 独立运行（npm run e2e），vitest 只收 tests/ 下的单测
+    exclude: ['node_modules', 'dist', 'e2e/**'],
+  },
 });

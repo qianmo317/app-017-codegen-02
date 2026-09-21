@@ -7,6 +7,7 @@ import EditorPage from './pages/EditorPage';
 import PrintPage from './pages/PrintPage';
 import LibraryPage from './pages/LibraryPage';
 import SettingsPage from './pages/SettingsPage';
+import ComparePage from './pages/ComparePage';
 
 interface SettingsCtx {
   settings: AppSettings;
@@ -44,6 +45,10 @@ export default function App() {
   if (path === '/' || path === '') page = <HomePage />;
   else if (path === '/library') page = <LibraryPage />;
   else if (path === '/settings') page = <SettingsPage />;
+  else if (path === '/compare') {
+    const q = new URLSearchParams(window.location.search);
+    page = <ComparePage oldId={q.get('old') ?? undefined} newId={q.get('new') ?? undefined} />;
+  }
   else if (/^\/editor\/[^/]+\/print$/.test(path)) page = <PrintPage id={path.split('/')[2]} />;
   else if (/^\/editor\/[^/]+$/.test(path)) page = <EditorPage id={path.split('/')[2]} />;
   else page = <HomePage />;
@@ -57,6 +62,9 @@ export default function App() {
         <span className="brand">盲文点字排版与打印工作室</span>
         <a href="/" onClick={(e) => { e.preventDefault(); window.history.pushState(null, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); }}>
           首页
+        </a>
+        <a href="/compare" onClick={(e) => { e.preventDefault(); window.history.pushState(null, '', '/compare'); window.dispatchEvent(new PopStateEvent('popstate')); }}>
+          版本对比
         </a>
         <a href="/library" onClick={(e) => { e.preventDefault(); window.history.pushState(null, '', '/library'); window.dispatchEvent(new PopStateEvent('popstate')); }}>
           模板与词语表

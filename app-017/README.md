@@ -16,6 +16,7 @@
 | 分页排版 | 每行 32 方、每页 25 行；段首缩进 2 方；**词不跨行**、标点不落行首；页码右对齐独占首行；超长词强制拆分并生成违规报告 |
 | 声调省写 | 实现 GF 0019-2018 §10.2 全部省写规则（10.2.1–10.2.7），支持「全部标调 / 省写（默认）/ 全部省略」三种模式 |
 | 打印导出 | SVG 点阵图（mm 精度）、300 DPI PNG、BRF 盲文文件（含结构校验）；附可选打印校准页 |
+| 版本对比 | 任选两版按方比对「新加 / 删除 / 换读音」，逐条给出页·行·方；整段移动、一段拆两段不计改动；可勾选逐条搬到另一版并自动重比；差得太多/对不上号时区分错位与真改动 |
 | 反向转换 | 点字 → 汉语（用于核对转换正确性） |
 | 无障碍 | 全键盘操作（Ctrl+Enter 转换）、aria-live 播报、跳转链接、高对比度模式、字号缩放 |
 | 持久化 | 文档存 IndexedDB（`braille-studio`/`docs`），应用设置存 localStorage（`app-017:settings`），刷新后全部保留 |
@@ -40,9 +41,9 @@ npm run preview    # 本地预览生产构建
 ## 测试
 
 ```bash
-npm test           # 单元测试（vitest）：转换/换行/BRF 校验/性能，280 条
+npm test           # 单元测试（vitest）：转换/换行/BRF 校验/性能/版本对比，300+ 条
 npm run test:watch # 监听模式
-npm run e2e        # Playwright e2e：9 条用例，自动 build + preview（独占端口 4317）
+npm run e2e        # Playwright e2e：13 条用例，自动 build + preview（独占端口 4317）
 E2E_BASE_URL=http://localhost:8097 npm run e2e   # e2e 直接打容器，验证生产镜像
 ```
 
@@ -73,6 +74,8 @@ curl http://localhost:8097/healthz   # → ok
 │   │   ├── convert.ts              #   点字转换（声调省写、多音字、overrides/confirmed）
 │   │   ├── layout.ts               #   分页排版（词不跨行、缩进、页码、违规报告）
 │   │   ├── brf.ts                  #   BRF 导出与结构校验（页终止符 \f\n）
+│   │   ├── diff.ts                 #   版本对比：语义单元抽取、两级对齐（位移/拆合段）、页行方定位、错位判定
+│   │   ├── patch.ts                #   选择性搬移改动（原文编辑 + 读音覆盖），搬完重比
 │   │   ├── svg.ts / png.ts         #   打印点阵图 / 300 DPI 位图 / 校准页
 │   │   ├── reverse.ts              #   反向转换（点字 → 汉语）
 │   │   ├── settings.ts             #   设置（localStorage，app-017:settings）
@@ -83,7 +86,7 @@ curl http://localhost:8097/healthz   # → ok
 │   │   ├── zh-pinyin.json          #   汉字 → 全部读音（多音字按常用度排序）
 │   │   ├── zh-digits.json / zh-letters.json / zh-punct.json
 │   │   └── segment-dict.json       #   分词词典（约 12 万词条，源自 jieba 主词典）
-│   ├── pages/                      # 首页 / 编辑器 / 打印 / 模板与词语表 / 设置
+│   ├── pages/                      # 首页 / 编辑器 / 版本对比 / 打印 / 模板与词语表 / 设置
 │   └── components/                 # 点阵方（SVG）、分页预览、多音字面板
 ├── tests/                          # 单元测试（vitest）
 └── e2e/                            # 端到端测试（Playwright）

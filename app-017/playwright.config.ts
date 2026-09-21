@@ -13,6 +13,8 @@ export default defineConfig({
     baseURL,
     locale: 'zh-CN',
     viewport: { width: 1440, height: 900 },
+    // 容器内以非特权用户运行时需要：沙箱需要命名空间/特权
+    launchOptions: { args: ['--no-sandbox', '--disable-dev-shm-usage'] },
   },
   webServer: containerMode
     ? undefined
